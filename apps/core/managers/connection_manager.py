@@ -28,3 +28,5 @@ class ConnectionManager:
                     await connection.send_json(message)
                 except:
                     pass  # Connection dead, will be cleaned up on next disconnect
+
+connection_manager = ConnectionManager()
