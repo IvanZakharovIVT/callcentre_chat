@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from .config import settings
 
+
 engine = create_async_engine(
     settings.DATABASE_A_URL,
     pool_use_lifo=True,

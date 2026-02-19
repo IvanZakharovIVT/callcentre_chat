@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class UserRoles(str, Enum):
+class UserRole(str, Enum):
     admin = "admin"
     member = "member"
