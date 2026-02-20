@@ -9,5 +9,5 @@ class Message(BaseDBModel):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     content: Mapped[Text] = mapped_column(type_=Text)
     user_uid: Mapped[int] = mapped_column( type_=String(36))
-    username: Mapped[str] = mapped_column(type_=String(255))
+    username: Mapped[str] = mapped_column(type_=String(50))
     email: Mapped[str] = mapped_column(type_=String(50))
