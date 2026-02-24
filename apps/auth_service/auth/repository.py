@@ -6,7 +6,7 @@ from apps.core.repository_base import BaseRepository
 
 
 class UserRepository(BaseRepository[User, UserCreateSchema, UserUpdateSchema]):
-    pk_name = 'uid'
+    pk_name = 'uuid'
 
     def __init__(self, session: AsyncSession):
         super().__init__(session)
