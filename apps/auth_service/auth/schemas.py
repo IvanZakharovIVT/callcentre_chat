@@ -1,16 +1,8 @@
 from typing import Optional, Annotated
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from apps.auth_service.auth.enums import UserRole
-
-
-class SighUpSchema(BaseModel):
-    username: str
-    email: str
-    role: UserRole
-    password: str
 
 
 class UserBaseSchema(BaseModel):
@@ -20,11 +12,11 @@ class UserBaseSchema(BaseModel):
 
 
 class UserCreateRequestSchema(UserBaseSchema):
-    password: Annotated[str, Field(min_length=8, max_length=10)]
+    password: Annotated[str, Field(min_length=8, max_length=20)]
 
 
 class UserCreateSchema(UserBaseSchema):
-    uuid: UUID
+    uuid: str
     password_hash: str
 
 

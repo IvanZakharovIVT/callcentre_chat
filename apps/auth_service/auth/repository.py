@@ -10,3 +10,4 @@ class UserRepository(BaseRepository[User, UserCreateSchema, UserUpdateSchema]):
 
     def __init__(self, session: AsyncSession):
         super().__init__(session)
+        self.model = User

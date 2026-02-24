@@ -23,3 +23,5 @@ class AuthService:
                 "uuid": str(uuid4())
             })
         )
+        await self._session.flush()
+        await self._session.commit()

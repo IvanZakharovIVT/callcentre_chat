@@ -66,7 +66,7 @@ class BaseRepository(Generic[T, C, U]):
 
         if (
             'UniqueViolationError' in error_class_name
-            or 'unique constraint' in error_message.lower()
+            or 'unique' in error_message.lower()
         ):
             field = self._extract_unique_field_from_error(orig_error)
             raise UniqueViolationError(field=field or 'unknown') from error
