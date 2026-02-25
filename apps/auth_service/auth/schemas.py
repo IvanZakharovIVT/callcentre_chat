@@ -5,6 +5,12 @@ from pydantic import BaseModel, Field
 from apps.auth_service.auth.enums import UserRole
 
 
+class UserAuthSchemaBase(BaseModel):
+    username: Annotated[str, Field(max_length=50)]
+    password: Annotated[str, Field(min_length=8, max_length=20)]
+    remember_me: Optional[bool] = True
+
+
 class UserBaseSchema(BaseModel):
     username: Annotated[str, Field(max_length=50)]
     email: Annotated[str, Field(max_length=50)]
