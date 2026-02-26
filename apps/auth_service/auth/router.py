@@ -31,7 +31,7 @@ async def sign_in(
 ):
     auth_service = AuthService(session)
     user = await auth_service.authenticate_and_get_user_jwt(
-        credentials_schema.username, credentials_schema.password, session
+        credentials_schema.username, credentials_schema.password
     )
 
     subject = {

@@ -33,7 +33,7 @@ class AuthService:
         return pwd_context.hash(password)
 
     async def authenticate_and_get_user_jwt(
-            self, username: str, password: str, session: AsyncSession
+            self, username: str, password: str
     ) -> User:
         user = await self._user_repository.get_by_username(username)
         if not user:
