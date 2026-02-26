@@ -1,5 +1,5 @@
-import jwt
-from jwt import ExpiredSignatureError, InvalidSignatureError, InvalidTokenError
+from authlib.jose import jwt
+from authlib.jose.errors import BadSignatureError, ExpiredTokenError
 from fastapi import HTTPException
 from fastapi.requests import Request
 from fastapi.security import HTTPBasic
@@ -22,11 +22,11 @@ async def get_data_from_token(request: Request, token_name: str):
             payload = jwt.decode(token, settings.JWT_SECRET_KEY)
             payload.validate()
             return payload.get('subject', {})
-        except ExpiredSignatureError:
+        except ExpiredTokenError:
             raise HTTPException(
                 status_code=401, detail='Срок действия токена закончился'
             )
-        except (UserAuthorizationError, InvalidSignatureError, InvalidTokenError):
+        except (UserAuthorizationError, BadSignatureError):
             raise HTTPException(
                 status_code=401, detail='Invalid token or expired token'
             )
