@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Optional
 from uuid import uuid4
 from passlib.context import CryptContext
 
@@ -10,6 +9,7 @@ from apps.auth_service.auth.exceptions import UserAuthorizationError
 from apps.auth_service.auth.models import User
 from apps.auth_service.auth.repository import UserRepository
 from apps.auth_service.auth.schemas import UserCreateRequestSchema, UserCreateSchema
+from apps.auth_service.auth.security import refresh_security, access_security
 from apps.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -69,10 +69,9 @@ class AuthService:
             response: Response,
     ):
         max_age = settings.AUTH_TOKEN_TIMEDELTA
-        auth_token = "access_security.create_access_token("
-        # auth_token = access_security.create_access_token(
-        #     subject=subject, expires_delta=timedelta(seconds=max_age)
-        # )
+        auth_token = access_security.create_access_token(
+            subject=subject, expires_delta=timedelta(seconds=max_age)
+        )
         self._set_token(auth_token, settings.AUTH_TOKEN_NAME, max_age, response)
 
     def set_refresh_token(
@@ -84,11 +83,10 @@ class AuthService:
         max_age = settings.REFRESH_TOKEN_TIMEDELTA
         if remember_me:
             max_age = settings.REMEMBER_ME_REFRESH_TIMEDELTA
-        refresh_token_val = "refresh_security.create_refresh_token("
-        # refresh_token_val = refresh_security.create_refresh_token(
-        #     subject=subject,
-        #     expires_delta=timedelta(seconds=max_age),
-        # )
+        refresh_token_val = refresh_security.create_refresh_token(
+            subject=subject,
+            expires_delta=timedelta(seconds=max_age),
+        )
         self._set_token(
             refresh_token_val,
             settings.REFRESH_TOKEN_NAME,
