@@ -58,11 +58,37 @@ services:
       - .env
     environment:
       - POSTGRES_HOST=db
-    ports:
-      - "8000:8000"
     depends_on:
       - db
-    command: uvicorn apps.main:app --host 0.0.0.0 --port 8000 --reload
+    command: >
+      uvicorn apps.auth_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /auth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.entrypoints=web"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.services.auth.loadbalancer.server.port=8080"
+      - "traefik.http.routers.auth.middlewares=auth-stripprefix"
+      - "traefik.http.middlewares.auth-stripprefix.stripprefix.prefixes=/auth"
+
+
+  chat_service:
+    image: call_centre:latest
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    depends_on:
+      - db
+    command: >
+      uvicorn apps.chat_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /chat
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.entrypoints=web"
+      - "traefik.http.routers.chat.rule=PathPrefix(`/chat`)"
+      - "traefik.http.services.chat.loadbalancer.server.port=8080"
+      - "traefik.http.routers.chat.middlewares=chat-stripprefix"
+      - "traefik.http.middlewares.chat-stripprefix.stripprefix.prefixes=/chat"
+
 
 volumes:
   pg_data:
