@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     POSTGRES_PORT: str
     POSTGRES_DB: str
 
+    # ELASTICSEARCH
+    ES_SERVER: str = 'localhost'
+    ES_USER: str = 'user'
+    ES_PASSWORD: str = 'password'
+
     # API VERSION CONFIG
     API_V1: str = '/v1'
 
