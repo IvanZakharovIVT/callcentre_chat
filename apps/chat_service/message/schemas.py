@@ -1,24 +1,22 @@
-from typing import Annotated
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 
 class MessageBaseSchema(BaseModel):
     content: str
-    user_uid: str
-    username: str
-    email: str
 
 
 class MessageCreateSchema(MessageBaseSchema):
-    pass
+    user_uid: str
+    username: str
+    email: str
+    chat_id: int
 
 
 class MessageUpdateSchema(MessageBaseSchema):
     pass
 
 
-class MessageDetailSchema(MessageBaseSchema):
+class MessageDetailSchema(MessageCreateSchema):
     pass
 

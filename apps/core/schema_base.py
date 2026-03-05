@@ -23,6 +23,7 @@ class BaseSearchFilter(BaseModel):
     search_field: Optional[str] = None
 
 
-class GeoJsonSchema(BaseModel):
-    type: Literal['Point', 'Polygon']
-    coordinates: List[float] | List[List[List[float]]]
+class AuthenticatedUser(BaseModel):
+    username: str
+    uuid: str
+    remember_me: bool
