@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from fastapi.requests import Request
 from fastapi.security import HTTPBasic
 from fastapi_jwt import JwtAccessBearer, JwtRefreshBearer
+from starlette.websockets import WebSocket
 
 from apps.auth_service.auth.exceptions import UserAuthorizationError
 from apps.core.config import settings
@@ -16,8 +17,7 @@ refresh_security = JwtRefreshBearer(secret_key=settings.JWT_SECRET_KEY, auto_err
 basic_security = HTTPBasic()
 
 
-async def get_data_from_token(request: Request, token_name: str) -> AuthenticatedUser:
-    token = request.cookies.get(token_name)
+async def get_data_from_token(token: str) -> AuthenticatedUser:
     if token:
         try:
             payload = jwt.decode(token, settings.JWT_SECRET_KEY)
@@ -34,9 +34,13 @@ async def get_data_from_token(request: Request, token_name: str) -> Authenticate
     raise HTTPException(status_code=401, detail='Not authenticated')
 
 
+async def get_data_from_socket_access_token(websocket: WebSocket) -> AuthenticatedUser:
+    return await get_data_from_token(websocket.cookies.get(settings.AUTH_TOKEN_NAME))
+
+
 async def get_data_from_access_token(request: Request) -> AuthenticatedUser:
-    return await get_data_from_token(request, settings.AUTH_TOKEN_NAME)
+    return await get_data_from_token(request.cookies.get(settings.AUTH_TOKEN_NAME))
 
 
 async def get_data_from_refresh_token(request: Request) -> AuthenticatedUser:
-    return await get_data_from_token(request, settings.REFRESH_TOKEN_NAME)
+    return await get_data_from_token(request.cookies.get(settings.REFRESH_TOKEN_NAME))

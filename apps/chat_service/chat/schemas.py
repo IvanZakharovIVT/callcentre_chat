@@ -17,5 +17,4 @@ class ChatUpdateSchema(ChatBaseSchema):
 
 
 class ChatDetailSchema(ChatBaseSchema):
-    pass
-
+    id: int
