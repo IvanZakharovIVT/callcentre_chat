@@ -5,6 +5,8 @@ from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 from apps.core.exeptions import MissingEnvVar
+# import os
+# os.environ['TZ'] = 'UTC'
 
 
 class Settings(BaseSettings):
