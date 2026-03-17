@@ -6,9 +6,22 @@ from apps.core.config import settings
 class ElasticsearchService:
     def __init__(self):
         self._es = AsyncElasticsearch(
-            hosts=settings.ES_SERVER,
-            # basic_auth=(settings.ES_USER, settings.ES_PASSWORD)
+            [f"http://{settings.ES_HOST}:{settings.ES_PORT}"],
         )
+
+    async def init_index(self, index_name: str):
+        if not await self._es.indices.exists(index=index_name):
+            mappings = {
+                "mappings": {
+                    "properties": {
+                        "name": {
+                            "type": "text",
+                            "analyzer": "russian"
+                        }
+                    }
+                }
+            }
+            await self._es.indices.create(index=index_name, body=mappings)
 
     async def search(self, query):
         return await self._es.search(

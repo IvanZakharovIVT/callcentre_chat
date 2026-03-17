@@ -25,7 +25,9 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
 
     # ELASTICSEARCH
-    ES_SERVER: str = 'localhost'
+    ES_INDEX: str = 'my_index'
+    ES_HOST: str = 'localhost'
+    ES_PORT: int = 9200
     ES_USER: str = 'user'
     ES_PASSWORD: str = 'password'
 

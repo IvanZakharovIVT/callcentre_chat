@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 
 from apps.chat_service.chat.router import router as chat_router
+from apps.chat_service.lifespan import lifespan
 
 app = FastAPI(
+    lifespan=lifespan,
     docs_url="/api/v1/docs",
     redoc_url="/api/v1/redoc",
     openapi_url="/api/v1/openapi.json",
