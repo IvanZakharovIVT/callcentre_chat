@@ -73,6 +73,30 @@ services:
       timeout: 10s
       retries: 5
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.1.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.1.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29093:29093"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:29093,LISTENER_DOCKER_EXTERNAL://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   auth_service:
     build:
