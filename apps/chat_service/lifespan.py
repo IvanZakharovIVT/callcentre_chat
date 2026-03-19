@@ -9,5 +9,21 @@ from apps.core.services.elasticsearch_service import ElasticsearchService
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     service = ElasticsearchService()
-    await service.init_index(settings.ES_INDEX)
+    mappings = {
+        "mappings": {
+            "properties": {
+                "content": {
+                    "type": "text",
+                    "analyzer": "russian"
+                },
+                "username": {
+                    "type": "text",
+                },
+                "email": {
+                    "type": "text",
+                },
+            }
+        }
+    }
+    await service.init_index(settings.ES_INDEX, mappings)
     yield
