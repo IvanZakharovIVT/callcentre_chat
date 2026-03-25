@@ -11,5 +11,5 @@ class MessageService:
 
     async def save_message(self, message: dict):
         schema = MessageCreateSchema(**message)
-        await self._repository.create(schema)
+        message = await self._repository.create(schema)
         await self._session.commit()

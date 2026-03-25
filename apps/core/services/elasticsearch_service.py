@@ -9,25 +9,15 @@ class ElasticsearchService:
             [f"http://{settings.ES_HOST}:{settings.ES_PORT}"],
         )
 
-    async def init_index(self, index_name: str):
+    async def init_index(self, index_name: str, mappings: dict):
         if not await self._es.indices.exists(index=index_name):
-            mappings = {
-                "mappings": {
-                    "properties": {
-                        "name": {
-                            "type": "text",
-                            "analyzer": "russian"
-                        }
-                    }
-                }
-            }
             await self._es.indices.create(index=index_name, body=mappings)
 
-    async def search(self, query):
+    async def search(self, index_name: str, query):
         return await self._es.search(
-            index='my_index',
+            index=index_name,
             d={"match_all": query}
         )
 
-    async def add_document(self, document):
-        await self._es.index(index="my_index", body=document)
+    async def add_document(self, index_name: str, document: dict):
+        await self._es.index(index=index_name, body=document)
