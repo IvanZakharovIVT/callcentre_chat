@@ -6,6 +6,7 @@ from apps.auth_service.admin.admin import UserAdmin
 from apps.auth_service.admin.auth import UsernameAndPasswordProvider
 from apps.auth_service.auth.models import User
 from apps.auth_service.auth.router import router as auth_router
+from apps.auth_service.lifespan import lifespan
 from apps.core.database import engine
 
 app = FastAPI(
@@ -14,6 +15,7 @@ app = FastAPI(
     openapi_url="/api/v1/openapi.json",
     title="auth user swagger",
     version="1.0.0",
+    lifespan=lifespan
 )
 
 
