@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends
@@ -10,6 +11,7 @@ from apps.chat_service.message.services.message_service import MessageService
 from apps.core.database import get_session
 from apps.core.managers.connection_manager import connection_manager
 from apps.core.schema_base import AuthenticatedUser
+from apps.chat_service.lifespan import kafka_producer
 
 
 @router.websocket("/{chat_id}/send")
@@ -19,11 +21,38 @@ async def websocket_endpoint(
         chat_id: int
 ):
     print(current_user)
+    
+    # Send user connected event to Kafka
+    try:
+        connected_event = {
+            "event_type": "user_connected",
+            "user_uuid": current_user.uuid,
+            "username": current_user.username,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        await kafka_producer.send_message("user-connected", connected_event)
+        print(f"Sent user connected event for {current_user.uuid}")
+    except Exception as e:
+        print(f"Failed to send user connected event: {e}")
+    
     await connection_manager.connect(chat_id, current_user.uuid, websocket)
     try:
         while True:
             message = await websocket.receive_text()
             print(message)
+            
+            # Send user activity event to Kafka
+            try:
+                activity_event = {
+                    "event_type": "user_activity",
+                    "user_uuid": current_user.uuid,
+                    "username": current_user.username,
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+                await kafka_producer.send_message("user-activity", activity_event)
+            except Exception as e:
+                print(f"Failed to send user activity event: {e}")
+            
             async for session in get_session():
                 data = {
                     'content': message,
@@ -36,4 +65,17 @@ async def websocket_endpoint(
             await connection_manager.broadcast(chat_id, f"Сообщение: {message}", exclude_user=current_user.uuid)
             await asyncio.sleep(3)
     except WebSocketDisconnect:
+        # Send user disconnected event to Kafka
+        try:
+            disconnected_event = {
+                "event_type": "user_disconnected",
+                "user_uuid": current_user.uuid,
+                "username": current_user.username,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            await kafka_producer.send_message("user-disconnected", disconnected_event)
+            print(f"Sent user disconnected event for {current_user.uuid}")
+        except Exception as e:
+            print(f"Failed to send user disconnected event: {e}")
+        
         connection_manager.disconnect(chat_id, current_user.uuid)
