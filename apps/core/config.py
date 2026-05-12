@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     ES_USER: str = 'user'
     ES_PASSWORD: str = 'password'
 
+    # KAFKA
+    BOOTSTRAP_SERVER: str = 'localhost:9092'
+
     # API VERSION CONFIG
     API_V1: str = '/v1'
 

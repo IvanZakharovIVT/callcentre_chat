@@ -13,7 +13,7 @@ class Message(BaseModel):
     topic: str = "default-topic"
 
 # Глобальный объект продюсера
-kafka_producer = KafkaProducer()
+kafka_producer = KafkaProducer(settings.BOOTSTRAP_SERVER)
 
 async def init_elasticsearch_index():
     service = ElasticsearchService()

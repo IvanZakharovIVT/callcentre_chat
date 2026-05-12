@@ -1,17 +1,17 @@
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime
 
 from fastapi import FastAPI
 
 from apps.auth_service.cunsumer import KafkaConsumer
+from apps.core.config import settings
 from apps.core.database import AsyncSession, engine
 from apps.auth_service.auth.services.user_service import UserService
 
 logger = logging.getLogger(__name__)
 
 # Глобальный объект консьюмера
-kafka_consumer = KafkaConsumer()
+kafka_consumer = KafkaConsumer(settings.BOOTSTRAP_SERVER)
 
 # Kafka topics for user status events
 USER_STATUS_TOPICS = ["user-connected", "user-disconnected", "user-activity"]
@@ -52,8 +52,6 @@ async def handle_message(message: dict, topic: str, partition: int, offset: int)
         except Exception as e:
             logger.error(f"Error processing message for user {user_uuid}: {e}")
             await session.rollback()
-        else:
-            await session.commit()
 
 
 @asynccontextmanager

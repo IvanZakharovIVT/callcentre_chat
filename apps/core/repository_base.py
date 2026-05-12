@@ -116,7 +116,7 @@ class BaseRepository(Generic[T, C, U]):
     async def get_by_pk(self, model_pk: int | str) -> Optional[T]:
         """Получение объекта по его id."""
 
-        stmt = self._base_query.where(self.model.id == model_pk)
+        stmt = self._base_query.where(self.pk_column == model_pk)
         existed_object = await self.session.scalar(stmt)
         if not existed_object:
             raise ObjectDoesntExist(self.model.__name__)
