@@ -24,6 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальные файлы проекта
 WORKDIR /app
 COPY apps/ ./apps/
+COPY alembic.ini .
 
 # Команда по умолчанию
 CMD ["/bin/bash"]

@@ -6,6 +6,8 @@ services:
       - .env
     ports:
       - "5433:5432"
+    networks:
+      - elastic-network
     volumes:
       - pg_data:/var/lib/postgresql/data/
 
@@ -25,6 +27,8 @@ services:
     ports:
       - "8082:8082"
       - "80:80"
+    networks:
+      - elastic-network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
@@ -118,14 +122,14 @@ services:
       - db
       - kafka
     command: >
-      uvicorn apps.auth_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /auth
+      sh -c "cd /app && alembic upgrade head && uvicorn apps.auth_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /auth"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.entrypoints=web"
       - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
-      - "traefik.http.services.auth.loadbalancer.server.port=8080"
-      - "traefik.http.routers.auth.middlewares=auth-stripprefix"
       - "traefik.http.middlewares.auth-stripprefix.stripprefix.prefixes=/auth"
+      - "traefik.http.routers.auth.middlewares=auth-stripprefix"
+      - "traefik.http.services.auth.loadbalancer.server.port=8080"
 
 
   chat_service:
@@ -140,14 +144,14 @@ services:
       - db
       - elasticsearch
     command: >
-      uvicorn apps.chat_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /chat
+      sh -c "cd /app && alembic upgrade head && uvicorn apps.chat_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /chat"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.entrypoints=web"
       - "traefik.http.routers.chat.rule=PathPrefix(`/chat`)"
-      - "traefik.http.services.chat.loadbalancer.server.port=8080"
-      - "traefik.http.routers.chat.middlewares=chat-stripprefix"
       - "traefik.http.middlewares.chat-stripprefix.stripprefix.prefixes=/chat"
+      - "traefik.http.routers.chat.middlewares=chat-stripprefix"
+      - "traefik.http.services.chat.loadbalancer.server.port=8080"
 
 
 volumes:

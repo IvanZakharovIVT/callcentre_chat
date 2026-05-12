@@ -35,6 +35,7 @@ async def get_data_from_token(token: str) -> AuthenticatedUser:
 
 
 async def get_data_from_socket_access_token(websocket: WebSocket) -> AuthenticatedUser:
+    print("we are here")
     return await get_data_from_token(websocket.cookies.get(settings.AUTH_TOKEN_NAME))
 
 
