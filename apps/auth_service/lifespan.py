@@ -30,7 +30,7 @@ async def handle_message(message: dict, topic: str, partition: int, offset: int)
         return
 
     # Create a database session for this message
-    async with AsyncSession(engine) as session:
+    async with AsyncSession() as session:
         user_service = UserService(session)
         
         try:
