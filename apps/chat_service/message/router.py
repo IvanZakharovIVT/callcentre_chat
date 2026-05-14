@@ -2,11 +2,10 @@ import asyncio
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, APIRouter
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from apps.auth_service.auth.security import get_data_from_socket_access_token
-from apps.chat_service.chat.router import router
 from apps.chat_service.message.services.message_service import MessageService
 from apps.core.database import get_session
 from apps.core.managers.connection_manager import connection_manager
@@ -14,14 +13,22 @@ from apps.core.schema_base import AuthenticatedUser
 from apps.chat_service.lifespan import kafka_producer
 
 
-@router.websocket("/{chat_id}/send")
+router = APIRouter(prefix="/message", tags=["message"])
+
+
+@router.websocket("/ping")
+async def ping(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_text("pong")
+
+
+@router.websocket("/chat/{chat_id}/send")
 async def websocket_endpoint(
         websocket: WebSocket,
         current_user: Annotated[AuthenticatedUser, Depends(get_data_from_socket_access_token)],
         chat_id: int
 ):
-    print(current_user)
-    
+
     # Send user connected event to Kafka
     try:
         connected_event = {

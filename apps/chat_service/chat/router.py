@@ -13,11 +13,6 @@ from apps.core.schema_base import AuthenticatedUser
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.get("/ping")
-async def ping():
-    return {"ping": "pong"}
-
-
 @router.post(
     '/chat',
     summary='Создание чата',

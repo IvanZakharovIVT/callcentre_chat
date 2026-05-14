@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from apps.chat_service.chat.router import router as chat_router
+from apps.chat_service.message.router import router as message_router
 from apps.chat_service.lifespan import lifespan
 
 app = FastAPI(
@@ -13,3 +14,4 @@ app = FastAPI(
 )
 
 app.include_router(chat_router)
+app.include_router(message_router)
