@@ -18,17 +18,46 @@ kafka_producer = KafkaProducer(settings.BOOTSTRAP_SERVER)
 async def init_elasticsearch_index():
     service = ElasticsearchService()
     mappings = {
+        "settings": {
+            "number_of_shards": 1,
+            "number_of_replicas": 0,
+            "analysis": {
+                "analyzer": {
+                    "russian_english_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "russian_stemmer", "english_stemmer"]
+                    }
+                },
+                "filter": {
+                    "russian_stemmer": {
+                        "type": "stemmer",
+                        "language": "russian"
+                    },
+                    "english_stemmer": {
+                        "type": "stemmer",
+                        "language": "english"
+                    }
+                }
+            }
+        },
         "mappings": {
             "properties": {
                 "content": {
                     "type": "text",
-                    "analyzer": "russian"
+                    "analyzer": "russian_english_analyzer"
                 },
                 "username": {
                     "type": "text",
                 },
                 "email": {
                     "type": "text",
+                },
+                "chat_id": {
+                    "type": "integer",
+                },
+                "timestamp": {
+                    "type": "date",
                 },
             }
         }

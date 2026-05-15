@@ -143,6 +143,7 @@ services:
     depends_on:
       - db
       - elasticsearch
+      - kafka
     command: >
       sh -c "cd /app && alembic upgrade head && uvicorn apps.chat_service.main:app --host 0.0.0.0 --port 8080 --workers 1 --root-path /chat"
     labels:

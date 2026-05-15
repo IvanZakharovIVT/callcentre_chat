@@ -13,10 +13,17 @@ class ElasticsearchService:
         if not await self._es.indices.exists(index=index_name):
             await self._es.indices.create(index=index_name, body=mappings)
 
-    async def search(self, index_name: str, query):
+    async def search(self, index_name: str, query: str):
         return await self._es.search(
             index=index_name,
-            d={"match_all": query}
+            body={
+                "query": {
+                    "multi_match": {
+                        "query": query,
+                        "fields": ["content", "username"]
+                    }
+                }
+            }
         )
 
     async def add_document(self, index_name: str, document: dict):
