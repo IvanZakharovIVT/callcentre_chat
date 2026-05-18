@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     ES_USER: str = 'user'
     ES_PASSWORD: str = 'password'
 
+    KIBANA_HOST: str = 'localhost'
+    KIBANA_PORT: int = 5601
+
     # KAFKA
     BOOTSTRAP_SERVER: str = 'localhost:9092'
 

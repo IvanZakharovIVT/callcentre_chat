@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.chat_service.message.repository import MessageRepository
-from apps.chat_service.message.schemas import MessageCreateSchema
+from apps.chat_service.message.schemas import MessageCreateSchema, MessageDetailSchema
 
 
 class MessageService:
@@ -9,7 +9,9 @@ class MessageService:
         self._session = session
         self._repository = MessageRepository(session)
 
-    async def save_message(self, message: dict):
+    async def save_message(self, message: dict) -> MessageDetailSchema:
         schema = MessageCreateSchema(**message)
-        message = await self._repository.create(schema)
+        message_obj = await self._repository.create(schema)
+        schema = MessageDetailSchema.model_validate(message_obj, from_attributes=True)
         await self._session.commit()
+        return schema

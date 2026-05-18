@@ -9,7 +9,6 @@ from apps.chat_service.chat.repository import ChatRepository
 from apps.chat_service.chat.schemas import ChatDetailSchema, ChatCreateSchema
 from apps.chat_service.chat.services.chat_service import ChatService
 from apps.chat_service.message.models import Message
-from apps.chat_service.message.schemas import MessageDetailSchema
 from apps.core.config import settings
 from apps.core.database import get_session
 from apps.core.schema_base import AuthenticatedUser
@@ -57,14 +56,14 @@ async def search_messages(
     if not hits:
         return {"results": [], "total": 0}
     
-    chat_ids = list(set(
-        hit["_source"].get("chat_id") for hit in hits if hit["_source"].get("chat_id")
+    message_ids = list(set(
+        hit["_source"].get("message_id") for hit in hits if hit["_source"].get("message_id")
     ))
     
     # Query database for messages in those chats
     stmt = (
         select(Message)
-        .where(Message.chat_id.in_(chat_ids))
+        .where(Message.id.in_(message_ids))
         .order_by(Message.created_at.desc())
     )
     result = await session.execute(stmt)

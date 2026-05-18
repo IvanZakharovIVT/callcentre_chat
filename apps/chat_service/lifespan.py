@@ -56,6 +56,9 @@ async def init_elasticsearch_index():
                 "chat_id": {
                     "type": "integer",
                 },
+                "message_id": {
+                    "type": "integer",
+                },
                 "timestamp": {
                     "type": "date",
                 },

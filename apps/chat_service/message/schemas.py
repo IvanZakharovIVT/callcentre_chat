@@ -18,5 +18,4 @@ class MessageUpdateSchema(MessageBaseSchema):
 
 
 class MessageDetailSchema(MessageCreateSchema):
-    pass
-
+    id: int

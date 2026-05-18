@@ -72,21 +72,23 @@ async def websocket_endpoint(
                     'email': 'current_user',
                     'chat_id': chat_id
                 }
-                await MessageService(session).save_message(data)
+                message_obj = await MessageService(session).save_message(data)
 
-            # Index message in Elasticsearch
-            try:
-                es_document = {
-                    "content": message,
-                    "username": current_user.username,
-                    "user_uuid": current_user.uuid,
-                    "chat_id": chat_id,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-                await es_service.add_document(settings.ES_INDEX, es_document)
-                print(f"Indexed message in Elasticsearch for chat {chat_id}")
-            except Exception as e:
-                print(f"Failed to index message in Elasticsearch: {e}")
+                # Index message in Elasticsearch
+                print(message_obj.id)
+                try:
+                    es_document = {
+                        "content": message,
+                        "username": current_user.username,
+                        "user_uuid": current_user.uuid,
+                        "chat_id": chat_id,
+                        "message_id": message_obj.id,
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
+                    await es_service.add_document(settings.ES_INDEX, es_document)
+                    print(f"Indexed message in Elasticsearch for chat {chat_id}")
+                except Exception as e:
+                    print(f"Failed to index message in Elasticsearch: {e}")
 
             await connection_manager.broadcast(chat_id, f"Сообщение: {message}", exclude_user=current_user.uuid)
             await asyncio.sleep(3)
